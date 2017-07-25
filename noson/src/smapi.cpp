@@ -164,6 +164,12 @@ bool SMAPI::Init(const SMServicePtr& smsvc, const std::string& locale)
   else if (auth != "Anonymous")
     return m_valid = false;
 
+  // make sure credentials are fulfilled
+  // - default devId with the current household ID
+  SMAccount::Credentials cr = smsvc->GetAccount()->GetCredentials();
+  if (cr.devId.empty())
+    smsvc->GetAccount()->SetCredentials(SMAccount::Credentials(m_deviceHouseholdID, cr.key, cr.token));
+
   // make the soap header
   m_valid = makeSoapHeader();
   return m_valid;
